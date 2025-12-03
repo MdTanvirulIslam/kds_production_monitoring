@@ -1,44 +1,283 @@
 <div class="sidebar-wrapper sidebar-theme">
-
     <nav id="sidebar">
+        <div class="navbar-nav theme-brand flex-row text-center">
+            <div class="nav-logo">
+                <div class="nav-item theme-logo">
+                    <a href="{{ route('dashboard') }}">
+                        <img src="{{ asset('assets/src/assets/img/logo.svg') }}" class="navbar-logo" alt="logo">
+                    </a>
+                </div>
+                <div class="nav-item theme-text">
+                    <a href="{{ route('dashboard') }}" class="nav-link">Factory</a>
+                </div>
+            </div>
+            <div class="nav-item sidebar-toggle">
+                <div class="btn-toggle sidebarCollapse">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-left">
+                        <polyline points="11 17 6 12 11 7"></polyline>
+                        <polyline points="18 17 13 12 18 7"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
         <div class="shadow-bottom"></div>
+
         <ul class="list-unstyled menu-categories" id="accordionExample">
 
-
-            <li class="menu active">
-                <a  href="{{ route("dashboard") }}" aria-expanded="false" class="dropdown-toggle">
+            {{-- ============================================ --}}
+            {{-- DASHBOARD - All Users --}}
+            {{-- ============================================ --}}
+            <li class="menu {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                <a href="{{ route('dashboard') }}" aria-expanded="false" class="dropdown-toggle">
                     <div class="">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
                         <span>Dashboard</span>
                     </div>
                 </a>
             </li>
 
+            {{-- ============================================ --}}
+            {{-- SUPERVISOR MENU - Supervisors Only --}}
+            {{-- ============================================ --}}
+            @if(auth()->user()->role === 'supervisor')
+                <li class="menu {{ request()->routeIs('supervisor.*') ? 'active' : '' }}">
+                    <a href="#supervisorMenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('supervisor.*') ? 'true' : 'false' }}" class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                            <span>Supervisor</span>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </div>
+                    </a>
+                    <ul class="collapse submenu list-unstyled {{ request()->routeIs('supervisor.*') ? 'show' : '' }}" id="supervisorMenu" data-bs-parent="#accordionExample">
+                        <li class="{{ request()->routeIs('supervisor.scan') ? 'active' : '' }}">
+                            <a href="{{ route('supervisor.scan') }}">QR Scanner</a>
+                        </li>
+                        <li class="{{ request()->routeIs('supervisor.quick-select') ? 'active' : '' }}">
+                            <a href="{{ route('supervisor.quick-select') }}">Quick Select Table</a>
+                        </li>
+                        <li class="{{ request()->routeIs('supervisor.my-activity') ? 'active' : '' }}">
+                            <a href="{{ route('supervisor.my-activity') }}">My Activity</a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
 
-
-
-
-            <li class="menu">
-                <a href="#Settings" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+            {{-- ============================================ --}}
+            {{-- TABLES - All Users (View), Admin (Full) --}}
+            {{-- ============================================ --}}
+            <li class="menu {{ request()->routeIs('tables.*') ? 'active' : '' }}">
+                <a href="#tablesMenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('tables.*') ? 'true' : 'false' }}" class="dropdown-toggle">
                     <div class="">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path fill="#383838" d="M415.9 274.5C428.1 271.2 440.9 277 446.4 288.3L465 325.9C475.3 327.3 485.4 330.1 494.9 334L529.9 310.7C540.4 303.7 554.3 305.1 563.2 314L582.4 333.2C591.3 342.1 592.7 356.1 585.7 366.5L562.4 401.4C564.3 406.1 566 411 567.4 416.1C568.8 421.2 569.7 426.2 570.4 431.3L608.1 449.9C619.4 455.5 625.2 468.3 621.9 480.4L614.9 506.6C611.6 518.7 600.3 526.9 587.7 526.1L545.7 523.4C539.4 531.5 532.1 539 523.8 545.4L526.5 587.3C527.3 599.9 519.1 611.3 507 614.5L480.8 621.5C468.6 624.8 455.9 619 450.3 607.7L431.7 570.1C421.4 568.7 411.3 565.9 401.8 562L366.8 585.3C356.3 592.3 342.4 590.9 333.5 582L314.3 562.8C305.4 553.9 304 540 311 529.5L334.3 494.5C332.4 489.8 330.7 484.9 329.3 479.8C327.9 474.7 327 469.6 326.3 464.6L288.6 446C277.3 440.4 271.6 427.6 274.8 415.5L281.8 389.3C285.1 377.2 296.4 369 309 369.8L350.9 372.5C357.2 364.4 364.5 356.9 372.8 350.5L370.1 308.7C369.3 296.1 377.5 284.7 389.6 281.5L415.8 274.5zM448.4 404C424.1 404 404.4 423.7 404.5 448.1C404.5 472.4 424.2 492 448.5 492C472.8 492 492.5 472.3 492.5 448C492.4 423.6 472.7 404 448.4 404zM224.9 18.5L251.1 25.5C263.2 28.8 271.4 40.2 270.6 52.7L267.9 94.5C276.2 100.9 283.5 108.3 289.8 116.5L331.8 113.8C344.3 113 355.7 121.2 359 133.3L366 159.5C369.2 171.6 363.5 184.4 352.2 190L314.5 208.6C313.8 213.7 312.8 218.8 311.5 223.8C310.2 228.8 308.4 233.8 306.5 238.5L329.8 273.5C336.8 284 335.4 297.9 326.5 306.8L307.3 326C298.4 334.9 284.5 336.3 274 329.3L239 306C229.5 309.9 219.4 312.7 209.1 314.1L190.5 351.7C184.9 363 172.1 368.7 160 365.5L133.8 358.5C121.6 355.2 113.5 343.8 114.3 331.3L117 289.4C108.7 283 101.4 275.6 95.1 267.4L53.1 270.1C40.6 270.9 29.2 262.7 25.9 250.6L18.9 224.4C15.7 212.3 21.4 199.5 32.7 193.9L70.4 175.3C71.1 170.2 72.1 165.2 73.4 160.1C74.8 155 76.4 150.1 78.4 145.4L55.1 110.5C48.1 100 49.5 86.1 58.4 77.2L77.6 58C86.5 49.1 100.4 47.7 110.9 54.7L145.9 78C155.4 74.1 165.5 71.3 175.8 69.9L194.4 32.3C200 21 212.7 15.3 224.9 18.5zM192.4 148C168.1 148 148.4 167.7 148.4 192C148.4 216.3 168.1 236 192.4 236C216.7 236 236.4 216.3 236.4 192C236.4 167.7 216.7 148 192.4 148z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Tables</span>
+                    </div>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </div>
+                </a>
+                <ul class="collapse submenu list-unstyled {{ request()->routeIs('tables.*') ? 'show' : '' }}" id="tablesMenu" data-bs-parent="#accordionExample">
+                    <li class="{{ request()->routeIs('tables.index') ? 'active' : '' }}">
+                        <a href="{{ route('tables.index') }}">View All Tables</a>
+                    </li>
+                    @if(auth()->user()->role === 'admin')
+                        <li class="{{ request()->routeIs('tables.create') ? 'active' : '' }}">
+                            <a href="{{ route('tables.create') }}">Add New Table</a>
+                        </li>
+                    @endif
+                </ul>
+            </li>
+
+            {{-- ============================================ --}}
+            {{-- WORKERS - All Users (View), Admin (Full) --}}
+            {{-- ============================================ --}}
+            <li class="menu {{ request()->routeIs('workers.*') ? 'active' : '' }}">
+                <a href="#workersMenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('workers.*') ? 'true' : 'false' }}" class="dropdown-toggle">
+                    <div class="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span>Workers</span>
+                    </div>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </div>
+                </a>
+                <ul class="collapse submenu list-unstyled {{ request()->routeIs('workers.*') ? 'show' : '' }}" id="workersMenu" data-bs-parent="#accordionExample">
+                    <li class="{{ request()->routeIs('workers.index') ? 'active' : '' }}">
+                        <a href="{{ route('workers.index') }}">View All Workers</a>
+                    </li>
+                    @if(auth()->user()->role === 'admin')
+                        <li class="{{ request()->routeIs('workers.create') ? 'active' : '' }}">
+                            <a href="{{ route('workers.create') }}">Add New Worker</a>
+                        </li>
+                    @endif
+                </ul>
+            </li>
+
+            {{-- ============================================ --}}
+            {{-- ASSIGNMENTS - Admin Only --}}
+            {{-- ============================================ --}}
+            @if(auth()->user()->role === 'admin')
+                <li class="menu {{ request()->routeIs('assignments.*') ? 'active' : '' }}">
+                    <a href="#assignmentsMenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('assignments.*') ? 'true' : 'false' }}" class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                            <span>Assignments</span>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </div>
+                    </a>
+                    <ul class="collapse submenu list-unstyled {{ request()->routeIs('assignments.*') ? 'show' : '' }}" id="assignmentsMenu" data-bs-parent="#accordionExample">
+                        <li class="{{ request()->routeIs('assignments.index') ? 'active' : '' }}">
+                            <a href="{{ route('assignments.index') }}">View Assignments</a>
+                        </li>
+                        <li class="{{ request()->routeIs('assignments.create') ? 'active' : '' }}">
+                            <a href="{{ route('assignments.create') }}">Create Assignment</a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+
+            {{-- ============================================ --}}
+            {{-- REPORTS - Admin & Monitor Only --}}
+            {{-- ============================================ --}}
+            @if(in_array(auth()->user()->role, ['admin', 'monitor']))
+                <li class="menu {{ request()->routeIs('reports.*') ? 'active' : '' }}">
+                    <a href="#reportsMenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('reports.*') ? 'true' : 'false' }}" class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                            <span>Reports</span>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </div>
+                    </a>
+                    <ul class="collapse submenu list-unstyled {{ request()->routeIs('reports.*') ? 'show' : '' }}" id="reportsMenu" data-bs-parent="#accordionExample">
+                        <li class="{{ request()->routeIs('reports.index') ? 'active' : '' }}">
+                            <a href="{{ route('reports.index') }}">Reports Dashboard</a>
+                        </li>
+                        <li class="{{ request()->routeIs('reports.daily') ? 'active' : '' }}">
+                            <a href="{{ route('reports.daily') }}">Daily Report</a>
+                        </li>
+                        <li class="{{ request()->routeIs('reports.monthly') ? 'active' : '' }}">
+                            <a href="{{ route('reports.monthly') }}">Monthly Report</a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+
+            {{-- ============================================ --}}
+            {{-- LIVE MONITOR - All Users --}}
+            {{-- ============================================ --}}
+            <li class="menu {{ request()->routeIs('monitor') ? 'active' : '' }}">
+                <a href="{{ route('monitor') }}" aria-expanded="false" class="dropdown-toggle">
+                    <div class="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-monitor">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                        <span>Live Monitor</span>
+                    </div>
+                </a>
+            </li>
+
+            {{-- ============================================ --}}
+            {{-- USER MANAGEMENT - Admin Only --}}
+            {{-- ============================================ --}}
+            @if(auth()->user()->role === 'admin')
+                <li class="menu {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                    <a href="#usersMenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('users.*') ? 'true' : 'false' }}" class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            <span>User Management</span>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </div>
+                    </a>
+                    <ul class="collapse submenu list-unstyled {{ request()->routeIs('users.*') ? 'show' : '' }}" id="usersMenu" data-bs-parent="#accordionExample">
+                        <li class="{{ request()->routeIs('users.index') ? 'active' : '' }}">
+                            <a href="{{ route('users.index') }}">View All Users</a>
+                        </li>
+                        <li class="{{ request()->routeIs('users.create') ? 'active' : '' }}">
+                            <a href="{{ route('users.create') }}">Add New User</a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+
+            {{-- ============================================ --}}
+            {{-- SETTINGS - All Users --}}
+            {{-- ============================================ --}}
+            <li class="menu {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+                <a href="#settingsMenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('profile.*') ? 'true' : 'false' }}" class="dropdown-toggle">
+                    <div class="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
                         <span>Settings</span>
                     </div>
                     <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
                     </div>
                 </a>
-                <ul class="collapse submenu list-unstyled" id="Settings" data-bs-parent="#accordionExample">
-
-
-                    <li>
-                        <a href="{{ route('profile.edit') }}"> Profile Settings </a>
+                <ul class="collapse submenu list-unstyled {{ request()->routeIs('profile.*') ? 'show' : '' }}" id="settingsMenu" data-bs-parent="#accordionExample">
+                    <li class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                        <a href="{{ route('profile.edit') }}">My Profile</a>
                     </li>
-
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}" id="sidebar-logout-form">
+                            @csrf
+                            <a href="#" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();">
+                                Logout
+                            </a>
+                        </form>
+                    </li>
                 </ul>
             </li>
         </ul>
-
     </nav>
-
 </div>

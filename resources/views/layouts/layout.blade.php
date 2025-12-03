@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <title>{{ config('app.name', 'CNF') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="icon" type="image/x-icon" href="{{ asset("assets/src/assets/img/favicon-32x32.png") }}"/>
     <link href="{{ asset("assets/layouts/vertical-light-menu/css/light/loader.css") }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset("assets/layouts/vertical-light-menu/css/dark/loader.css") }}" rel="stylesheet" type="text/css" />
@@ -23,11 +23,6 @@
     <link href="{{ asset("assets/src/plugins/src/apex/apexcharts.css") }}" rel="stylesheet" type="text/css">
     <link href="{{ asset("assets/src/assets/css/light/dashboard/dash_1.css") }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset("assets/src/assets/css/dark/dashboard/dash_1.css") }}" rel="stylesheet" type="text/css" />
-    <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
-
-    <!-- BEGIN PAGE LEVEL STYLES -->
-
-    <!-- END PAGE LEVEL STYLES -->
 
     <link rel="stylesheet" type="text/css" href="{{ asset("assets/src/plugins/src/tomSelect/tom-select.default.min.css") }}">
     <link rel="stylesheet" type="text/css" href="{{ asset("assets/src/plugins/css/light/tomSelect/custom-tomSelect.css") }}">
@@ -78,6 +73,7 @@
 <!-- END MAIN CONTAINER -->
 
 <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+<!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
 <script src="{{ asset("assets/src/plugins/src/global/vendors.min.js") }}"></script>
 <script src="{{ asset("assets/src/bootstrap/js/bootstrap.bundle.min.js") }}"></script>
 <script src="{{ asset("assets/src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js") }}"></script>
@@ -102,6 +98,16 @@
 
 <script src="{{ asset("assets/src/plugins/src/flatpickr/flatpickr.js") }}"></script>
 <script src="{{ asset("assets/src/plugins/src/flatpickr/custom-flatpickr.js") }}"></script>
+
+
+<!-- QR Scanner -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<!-- Chart.js for graphs -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Axios for API calls -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <script>
 
