@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\LightControlController;
 use App\Http\Controllers\Api\ProductionLogController;
 use App\Http\Controllers\Api\TableController;
 use App\Http\Controllers\Api\AlertController;
+use App\Http\Controllers\Api\ESP32Controller;
 
 // ==========================================
 // PUBLIC API ROUTES (For ESP32 devices)
@@ -50,7 +51,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Alerts
     Route::get('/alerts/active', [AlertController::class, 'getActive']);
     Route::post('/alerts/{alert}/acknowledge', [AlertController::class, 'acknowledge']);
+
+
 });
+
+// ESP32 API Routes (No authentication required for ESP32)
+Route::prefix('esp32')->group(function () {
+    Route::get('/poll', [ESP32Controller::class, 'poll']);
+    Route::post('/status', [ESP32Controller::class, 'status']);
+    Route::post('/alert', [ESP32Controller::class, 'alert']);
+    Route::get('/notifications', [ESP32Controller::class, 'getNotifications']);
+    Route::get('/devices', [ESP32Controller::class, 'getDevices']);
+});
+
+Route::get('/esp32/notifications', [ESP32Controller::class, 'getNotifications']);
+Route::get('/esp32/devices', [ESP32Controller::class, 'getDevices']);
 
 // ==========================================
 // ADMIN ONLY API ROUTES

@@ -1,0 +1,28 @@
+<IfModule mod_rewrite.c>
+    Options -MultiViews -Indexes
+    RewriteEngine On
+
+    # FIX ASSETS LOCATION
+    RewriteRule ^css/(.*)$ public/assets/src/assets/css/$1 [L]
+    RewriteRule ^js/(.*)$ public/assets/src/assets/js/$1 [L]
+    RewriteRule ^img/(.*)$ public/assets/src/assets/img/$1 [L]
+    RewriteRule ^images/(.*)$ public/assets/src/assets/img/$1 [L]
+
+    # Allow /public folder
+    RewriteCond %{REQUEST_URI} ^/(assets|storage|plugins|build)
+    RewriteRule ^(.*)$ public/$1 [L]
+
+    # Laravel headers
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Remove trailing slash
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Laravel index.php
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>

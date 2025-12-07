@@ -27,7 +27,7 @@ class TableController extends Controller
                         'id' => $table->currentAssignment->worker->id,
                         'name' => $table->currentAssignment->worker->name,
                     ] : null,
-                    'today_production' => $table->getTodayProduction(),
+                    'today_production' => $table->today_production,
                 ];
             });
 
@@ -53,7 +53,7 @@ class TableController extends Controller
                 'light_status' => $table->current_light_status,
                 'esp32_ip' => $table->esp32_ip,
                 'worker' => $table->currentAssignment?->worker,
-                'today_production' => $table->getTodayProduction(),
+                'today_production' => $table->today_production,
             ],
         ]);
     }

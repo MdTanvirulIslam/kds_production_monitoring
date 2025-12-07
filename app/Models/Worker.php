@@ -2,86 +2,102 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class Worker extends Model
 {
-    use SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'worker_id',
         'name',
         'phone',
         'email',
-        'date_of_birth',
-        'joining_date',
-        'skill_level',
         'photo',
+        'skill_level',
+        'department',
+        'joining_date',
         'is_active',
         'notes',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
-        'date_of_birth' => 'date',
         'joining_date' => 'date',
+        'is_active' => 'boolean',
     ];
 
-    // Get current active assignment for today
-    public function currentAssignment(): HasOne
+    /**
+     * Get current assignment for today
+     */
+    public function currentAssignment()
     {
         return $this->hasOne(TableAssignment::class)
-            ->where('status', 'active')
-            ->whereDate('assigned_date', today());
+            ->whereDate('assigned_date', Carbon::today('Asia/Dhaka'))
+            ->where('status', 'active');
     }
 
-    // All assignments
-    public function assignments(): HasMany
+    /**
+     * Get all assignments
+     */
+    public function assignments()
     {
         return $this->hasMany(TableAssignment::class);
     }
 
-    // All production logs
-    public function productionLogs(): HasMany
+    /**
+     * Get all production logs
+     */
+    public function productionLogs()
     {
         return $this->hasMany(ProductionLog::class);
     }
 
-    // All light indicators
-    public function lightIndicators(): HasMany
+    /**
+     * Get all light indicators
+     */
+    public function lightIndicators()
     {
         return $this->hasMany(LightIndicator::class);
     }
 
-    // Get today's production count
-    public function getTodayProduction(): int
+    /**
+     * Get today's production count
+     */
+    public function getTodayProductionAttribute()
     {
         return $this->productionLogs()
-            ->whereDate('production_date', today())
+            ->whereDate('production_date', Carbon::today('Asia/Dhaka'))
             ->sum('garments_count');
     }
 
-    // Get current table
-    public function getCurrentTable()
+    /**
+     * Get this month's production count
+     */
+    public function getMonthlyProductionAttribute()
     {
-        return $this->currentAssignment?->table;
+        return $this->productionLogs()
+            ->whereMonth('production_date', Carbon::now('Asia/Dhaka')->month)
+            ->whereYear('production_date', Carbon::now('Asia/Dhaka')->year)
+            ->sum('garments_count');
     }
 
-    // Scope for active workers
+    /**
+     * Scope for active workers
+     */
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
     }
 
-    // Get photo URL
-    public function getPhotoUrlAttribute(): string
+    /**
+     * Scope for workers with production in date range
+     */
+    public function scopeWithProductionBetween($query, $startDate, $endDate)
     {
-        if ($this->photo) {
-            return asset('storage/' . $this->photo);
-        }
-        return asset('assets/images/default-worker.png');
+        return $query->whereHas('productionLogs', function ($q) use ($startDate, $endDate) {
+            $q->whereBetween('production_date', [$startDate, $endDate]);
+        });
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class ProductionLog extends Model
 {
@@ -13,16 +14,17 @@ class ProductionLog extends Model
         'table_id',
         'worker_id',
         'supervisor_id',
-        'production_date',
-        'production_hour',
         'garments_count',
         'product_type',
+        'production_date',
+        'production_hour',
+        'shift_id',
         'notes',
     ];
 
     protected $casts = [
-        'production_date' => 'date',
         'garments_count' => 'integer',
+        'production_date' => 'date',
     ];
 
     /**
@@ -42,7 +44,7 @@ class ProductionLog extends Model
     }
 
     /**
-     * Get the supervisor (user)
+     * Get the supervisor who logged this
      */
     public function supervisor()
     {
@@ -50,18 +52,58 @@ class ProductionLog extends Model
     }
 
     /**
+     * Get the shift
+     */
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class);
+    }
+
+    /**
      * Scope for today's logs
      */
     public function scopeToday($query)
     {
-        return $query->whereDate('production_date', today());
+        return $query->whereDate('production_date', Carbon::today('Asia/Dhaka'));
     }
 
     /**
-     * Scope for specific date
+     * Scope for a specific date
      */
     public function scopeForDate($query, $date)
     {
         return $query->whereDate('production_date', $date);
+    }
+
+    /**
+     * Scope for a date range
+     */
+    public function scopeBetweenDates($query, $startDate, $endDate)
+    {
+        return $query->whereBetween('production_date', [$startDate, $endDate]);
+    }
+
+    /**
+     * Scope for a specific shift
+     */
+    public function scopeForShift($query, $shiftId)
+    {
+        return $query->where('shift_id', $shiftId);
+    }
+
+    /**
+     * Scope for a specific worker
+     */
+    public function scopeForWorker($query, $workerId)
+    {
+        return $query->where('worker_id', $workerId);
+    }
+
+    /**
+     * Scope for a specific table
+     */
+    public function scopeForTable($query, $tableId)
+    {
+        return $query->where('table_id', $tableId);
     }
 }

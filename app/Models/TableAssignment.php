@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Carbon\Carbon;
 
 class TableAssignment extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'table_id',
         'worker_id',
         'assigned_date',
+        'assigned_by',
+        'shift_id',
         'shift_start',
         'shift_end',
         'status',
@@ -20,39 +24,81 @@ class TableAssignment extends Model
 
     protected $casts = [
         'assigned_date' => 'date',
-        'shift_start' => 'datetime:H:i',
-        'shift_end' => 'datetime:H:i',
     ];
 
-    // Relationship to table
-    public function table(): BelongsTo
+    /**
+     * Get the table
+     */
+    public function table()
     {
         return $this->belongsTo(Table::class);
     }
 
-    // Relationship to worker
-    public function worker(): BelongsTo
+    /**
+     * Get the worker
+     */
+    public function worker()
     {
         return $this->belongsTo(Worker::class);
     }
 
-    // Production logs for this assignment
-    public function productionLogs(): HasMany
+    /**
+     * Get the shift (if using shifts table)
+     */
+    public function shift()
     {
-        return $this->table->productionLogs()
-            ->where('worker_id', $this->worker_id)
-            ->whereDate('production_date', $this->assigned_date);
+        return $this->belongsTo(Shift::class);
     }
 
-    // Scope for active assignments
+    /**
+     * Get the user who assigned
+     */
+    public function assignedBy()
+    {
+        return $this->belongsTo(User::class, 'assigned_by');
+    }
+
+    /**
+     * Get formatted shift time
+     */
+    public function getShiftTimeAttribute()
+    {
+        if ($this->shift_start && $this->shift_end) {
+            return Carbon::parse($this->shift_start)->format('h:i A') . ' - ' .
+                Carbon::parse($this->shift_end)->format('h:i A');
+        }
+        return null;
+    }
+
+    /**
+     * Scope for active assignments
+     */
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
     }
 
-    // Scope for today's assignments
+    /**
+     * Scope for today's assignments
+     */
     public function scopeToday($query)
     {
-        return $query->whereDate('assigned_date', today());
+        return $query->whereDate('assigned_date', Carbon::today('Asia/Dhaka'));
+    }
+
+    /**
+     * Scope for a specific date
+     */
+    public function scopeForDate($query, $date)
+    {
+        return $query->whereDate('assigned_date', $date);
+    }
+
+    /**
+     * Scope for a specific shift
+     */
+    public function scopeForShift($query, $shiftId)
+    {
+        return $query->where('shift_id', $shiftId);
     }
 }

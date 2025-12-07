@@ -10,6 +10,9 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductionTargetController;
+use App\Http\Controllers\Api\ESP32Controller;
+use App\Http\Controllers\DeviceController;
 use App\Http\Middleware\CheckDomain;
 
 // ==========================================
@@ -71,10 +74,24 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/workers/{worker}', [WorkerController::class, 'destroy'])->name('workers.destroy');
 
     // Table Assignments - Full CRUD
-    Route::resource('assignments', TableAssignmentController::class);
-    Route::post('/assignments/bulk', [TableAssignmentController::class, 'bulkAssign'])->name('assignments.bulk');
-    Route::post('/assignments/copy', [TableAssignmentController::class, 'copyFromDate'])->name('assignments.copy');
 
+    Route::get('/assignments/bulk', [TableAssignmentController::class, 'bulk'])
+        ->name('assignments.bulk');
+
+// Bulk Store (AJAX)
+    Route::post('/assignments/bulk-store', [TableAssignmentController::class, 'bulkStore'])
+        ->name('assignments.bulk-store');
+
+// Copy Assignments (AJAX)
+    Route::post('/assignments/copy', [TableAssignmentController::class, 'copy'])
+        ->name('assignments.copy');
+
+// Clear All Assignments for Date (AJAX)
+    Route::post('/assignments/clear-all', [TableAssignmentController::class, 'clearAll'])
+        ->name('assignments.clear-all');
+    // Add before the resource route
+    Route::post('/assignments/clear-date', [TableAssignmentController::class, 'clearDate'])->name('assignments.clear-date');
+    Route::resource('assignments', TableAssignmentController::class);
     // User Management
     Route::resource('users', UserController::class);
     Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
@@ -92,30 +109,83 @@ Route::middleware(['auth'])->group(function () {
 // ==========================================
 // SUPERVISOR ONLY ROUTES
 // ==========================================
-Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supervisor.')->group(function () {
-    Route::get('/scan', [SupervisorController::class, 'scan'])->name('scan');
-    Route::post('/scan/process', [SupervisorController::class, 'processScan'])->name('scan.process');
-    Route::post('/production/store', [SupervisorController::class, 'storeProduction'])->name('production.store');
-    Route::post('/light/set', [SupervisorController::class, 'setLight'])->name('light.set');
-    Route::get('/my-activity', [SupervisorController::class, 'myActivity'])->name('my-activity');
-    Route::get('/quick-select', [SupervisorController::class, 'quickSelect'])->name('quick-select');
+Route::middleware(['auth'])->group(function () {
+
+    // Supervisor Routes
+    Route::get('/supervisor/scan', [SupervisorController::class, 'scan'])->name('supervisor.scan');
+    Route::post('/supervisor/process-scan', [SupervisorController::class, 'processScan'])->name('supervisor.scan.process');  // Changed name
+    Route::post('/supervisor/production', [SupervisorController::class, 'storeProduction'])->name('supervisor.production.store');
+    Route::post('/supervisor/light', [SupervisorController::class, 'setLight'])->name('supervisor.light.set');
+    Route::get('/supervisor/my-activity', [SupervisorController::class, 'myActivity'])->name('supervisor.my-activity');
+    Route::get('/supervisor/quick-select', [SupervisorController::class, 'quickSelect'])->name('supervisor.quick-select');
+    Route::get('/supervisor/device-status', [SupervisorController::class, 'getDeviceStatus'])->name('supervisor.device.status');
+    
 });
+
+Route::middleware(['auth'])->group(function () {
+
+    // Production Targets - Custom routes FIRST
+    Route::get('/production-targets/bulk-create', [ProductionTargetController::class, 'bulkCreate'])->name('production-targets.bulk-create');
+    Route::post('/production-targets/bulk-store', [ProductionTargetController::class, 'bulkStore'])->name('production-targets.bulk-store');
+    Route::post('/production-targets/copy', [ProductionTargetController::class, 'copy'])->name('production-targets.copy');
+
+    // Production Targets - Resource routes
+    Route::resource('production-targets', ProductionTargetController::class);
+
+});
+
+Route::middleware(['auth'])->group(function () {
+    // ... existing routes
+
+    // Device Management
+    Route::get('/devices', [DeviceController::class, 'index'])->name('devices.index');
+    Route::get('/devices/status', [DeviceController::class, 'getDevicesStatus'])->name('devices.status');
+    Route::get('/devices/notifications', [DeviceController::class, 'getNotifications'])->name('devices.notifications');
+    Route::post('/devices/notifications/{id}/read', [DeviceController::class, 'markAsRead'])->name('devices.mark-read');
+    Route::post('/devices/notifications/mark-all-read', [DeviceController::class, 'markAllAsRead'])->name('devices.mark-all-read');
+    Route::delete('/devices/notifications/{id}', [DeviceController::class, 'deleteNotification'])->name('devices.delete-notification');
+    Route::post('/devices/notifications/clear-all', [DeviceController::class, 'clearAllNotifications'])->name('devices.clear-all');
+    Route::post('/devices/command', [DeviceController::class, 'sendCommand'])->name('devices.command');
+});
+
 
 // ==========================================
 // ADMIN & MONITOR ROUTES (Reports)
 // ==========================================
-Route::middleware(['auth', 'role:admin,monitor'])->prefix('reports')->name('reports.')->group(function () {
-    Route::get('/', [ReportController::class, 'index'])->name('index');
-    Route::get('/daily', [ReportController::class, 'daily'])->name('daily');
-    Route::get('/monthly', [ReportController::class, 'monthly'])->name('monthly');
-    Route::get('/worker/{worker}', [ReportController::class, 'worker'])->name('worker');
-    Route::post('/export', [ReportController::class, 'export'])->name('export');
+Route::middleware(['auth'])->group(function () {
+
+    // Reports Dashboard
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
+    // Daily Report
+    Route::get('/reports/daily', [ReportController::class, 'daily'])->name('reports.daily');
+
+    // Monthly Report
+    Route::get('/reports/monthly', [ReportController::class, 'monthly'])->name('reports.monthly');
+
+    // Worker Report
+    Route::get('/reports/worker/{worker}', [ReportController::class, 'worker'])->name('reports.worker');
+
+    // Export Reports
+    Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
+
 });
+
+
+
+
 
 Route::middleware(['auth','verified', CheckDomain::class])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::get('/clear-cache', function() {
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('route:clear');
+    return 'Cache cleared!';
 });
 
 require __DIR__.'/auth.php';

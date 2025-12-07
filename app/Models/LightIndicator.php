@@ -2,22 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
 
 class LightIndicator extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'table_id',
         'worker_id',
         'supervisor_id',
         'light_color',
         'reason',
-        'notes',
         'activated_at',
         'deactivated_at',
-        'duration_seconds',
     ];
 
     protected $casts = [
@@ -25,40 +25,74 @@ class LightIndicator extends Model
         'deactivated_at' => 'datetime',
     ];
 
-    // Relationship to table
-    public function table(): BelongsTo
+    /**
+     * Get the table
+     */
+    public function table()
     {
         return $this->belongsTo(Table::class);
     }
 
-    // Relationship to worker
-    public function worker(): BelongsTo
+    /**
+     * Get the worker
+     */
+    public function worker()
     {
         return $this->belongsTo(Worker::class);
     }
 
-    // Relationship to supervisor
-    public function supervisor(): BelongsTo
+    /**
+     * Get the supervisor who set this
+     */
+    public function supervisor()
     {
         return $this->belongsTo(User::class, 'supervisor_id');
     }
 
-    // Deactivate this light
-    public function deactivate(): void
-    {
-        $this->deactivated_at = now();
-        $this->duration_seconds = $this->activated_at->diffInSeconds($this->deactivated_at);
-        $this->save();
-    }
-
-    // Scope for active lights
+    /**
+     * Scope for active indicators (not deactivated)
+     */
     public function scopeActive($query)
     {
         return $query->whereNull('deactivated_at');
     }
 
-    // Scope for specific color
-    public function scopeColor($query, $color)
+    /**
+     * Scope for today's indicators
+     */
+    public function scopeToday($query)
+    {
+        return $query->whereDate('activated_at', Carbon::today('Asia/Dhaka'));
+    }
+
+    /**
+     * Scope for a specific date
+     */
+    public function scopeForDate($query, $date)
+    {
+        return $query->whereDate('activated_at', $date);
+    }
+
+    /**
+     * Scope for a date range
+     */
+    public function scopeBetweenDates($query, $startDate, $endDate)
+    {
+        return $query->whereBetween('activated_at', [$startDate, $endDate]);
+    }
+
+    /**
+     * Scope for red alerts
+     */
+    public function scopeRedAlerts($query)
+    {
+        return $query->where('light_color', 'red');
+    }
+
+    /**
+     * Scope for a specific color
+     */
+    public function scopeByColor($query, $color)
     {
         return $query->where('light_color', $color);
     }

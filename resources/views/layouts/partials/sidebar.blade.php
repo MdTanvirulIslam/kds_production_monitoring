@@ -74,6 +74,42 @@
             @endif
 
             {{-- ============================================ --}}
+            {{-- ASSIGNMENTS - Admin Only --}}
+            {{-- ============================================ --}}
+            @if(auth()->user()->role === 'admin')
+                <li class="menu {{ request()->routeIs('assignments.*') ? 'active' : '' }}">
+                    <a href="#assignmentsMenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('assignments.*') ? 'true' : 'false' }}" class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clipboard">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            </svg>
+                            <span>Assignments</span>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </div>
+                    </a>
+                    <ul class="collapse submenu list-unstyled {{ request()->routeIs('assignments.*') ? 'show' : '' }}" id="assignmentsMenu" data-bs-parent="#accordionExample">
+                        <li class="{{ request()->routeIs('assignments.bulk') ? 'active' : '' }}">
+                            <a href="{{ route('assignments.bulk') }}">
+                                <span class="badge badge-primary float-end" style="font-size: 0.65rem;"></span>
+                                Bulk Assignment
+                            </a>
+                        </li>
+                        <li class="{{ request()->routeIs('assignments.index') ? 'active' : '' }}">
+                            <a href="{{ route('assignments.index') }}">View Assignments</a>
+                        </li>
+                        <li class="{{ request()->routeIs('assignments.create') ? 'active' : '' }}">
+                            <a href="{{ route('assignments.create') }}">Add Assignment</a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+
+            {{-- ============================================ --}}
             {{-- TABLES - All Users (View), Admin (Full) --}}
             {{-- ============================================ --}}
             <li class="menu {{ request()->routeIs('tables.*') ? 'active' : '' }}">
@@ -138,17 +174,18 @@
             </li>
 
             {{-- ============================================ --}}
-            {{-- ASSIGNMENTS - Admin Only --}}
+            {{-- PRODUCTION TARGETS - Admin Only --}}
             {{-- ============================================ --}}
             @if(auth()->user()->role === 'admin')
-                <li class="menu {{ request()->routeIs('assignments.*') ? 'active' : '' }}">
-                    <a href="#assignmentsMenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('assignments.*') ? 'true' : 'false' }}" class="dropdown-toggle">
+                <li class="menu {{ request()->routeIs('production-targets.*') ? 'active' : '' }}">
+                    <a href="#targetsMenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('production-targets.*') ? 'true' : 'false' }}" class="dropdown-toggle">
                         <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
-                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-target">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <circle cx="12" cy="12" r="6"></circle>
+                                <circle cx="12" cy="12" r="2"></circle>
                             </svg>
-                            <span>Assignments</span>
+                            <span>Production Targets</span>
                         </div>
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
@@ -156,12 +193,18 @@
                             </svg>
                         </div>
                     </a>
-                    <ul class="collapse submenu list-unstyled {{ request()->routeIs('assignments.*') ? 'show' : '' }}" id="assignmentsMenu" data-bs-parent="#accordionExample">
-                        <li class="{{ request()->routeIs('assignments.index') ? 'active' : '' }}">
-                            <a href="{{ route('assignments.index') }}">View Assignments</a>
+                    <ul class="collapse submenu list-unstyled {{ request()->routeIs('production-targets.*') ? 'show' : '' }}" id="targetsMenu" data-bs-parent="#accordionExample">
+                        <li class="{{ request()->routeIs('production-targets.index') ? 'active' : '' }}">
+                            <a href="{{ route('production-targets.index') }}">View Targets</a>
                         </li>
-                        <li class="{{ request()->routeIs('assignments.create') ? 'active' : '' }}">
-                            <a href="{{ route('assignments.create') }}">Create Assignment</a>
+                        <li class="{{ request()->routeIs('production-targets.create') ? 'active' : '' }}">
+                            <a href="{{ route('production-targets.create') }}">Add Target</a>
+                        </li>
+                        <li class="{{ request()->routeIs('production-targets.bulk-create') ? 'active' : '' }}">
+                            <a href="{{ route('production-targets.bulk-create') }}">
+                                <span class="badge badge-success float-end" style="font-size: 0.65rem;">Bulk</span>
+                                Bulk Create
+                            </a>
                         </li>
                     </ul>
                 </li>
@@ -196,6 +239,9 @@
                         </li>
                         <li class="{{ request()->routeIs('reports.monthly') ? 'active' : '' }}">
                             <a href="{{ route('reports.monthly') }}">Monthly Report</a>
+                        </li>
+                        <li class="{{ request()->routeIs('reports.worker') ? 'active' : '' }}">
+                            <a href="{{ route('workers.index') }}?view=reports">Worker Reports</a>
                         </li>
                     </ul>
                 </li>

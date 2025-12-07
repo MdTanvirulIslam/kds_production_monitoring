@@ -90,7 +90,7 @@ class WorkerController extends Controller
         }]);
 
         // Get today's production
-        $todayProduction = $worker->getTodayProduction();
+        $todayProduction = $worker->today_production;
 
         // Get weekly production
         $weeklyProduction = $worker->productionLogs()

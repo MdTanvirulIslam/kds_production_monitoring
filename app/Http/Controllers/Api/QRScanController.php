@@ -59,7 +59,7 @@ class QRScanController extends Controller
                     'name' => $worker->name,
                     'skill_level' => $worker->skill_level,
                     'photo' => $worker->photo_url,
-                    'today_production' => $worker->getTodayProduction(),
+                    'today_production' => $worker->today_production,
                 ] : null,
             ],
         ]);

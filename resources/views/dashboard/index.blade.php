@@ -202,192 +202,229 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
             font-size: 0.75rem;
+            font-weight: 700;
             margin-right: 8px;
+            border-radius: 50%;
             background: #f0f0f0;
         }
-        .worker-item.gold .rank { background: linear-gradient(135deg, #f5af19, #f12711); }
-        .worker-item.silver .rank { background: linear-gradient(135deg, #bdc3c7, #7f8c8d); }
-        .worker-item.bronze .rank { background: linear-gradient(135deg, #c9820e, #a25d0e); }
+        .worker-item.gold .rank { background: linear-gradient(135deg, #f5af19 0%, #f12711 100%); color: #fff; }
+        .worker-item.silver .rank { background: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%); color: #fff; }
+        .worker-item.bronze .rank { background: linear-gradient(135deg, #b08d57 0%, #744d15 100%); color: #fff; }
         .worker-item .worker-name {
-            flex: 1;
+            flex-grow: 1;
             font-size: 0.8rem;
             font-weight: 500;
         }
         .worker-item .production-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
             padding: 2px 8px;
             border-radius: 10px;
-            font-size: 0.7rem;
-            font-weight: 700;
         }
 
-        /* Hourly Table Compact */
+        /* Hourly Production */
         .hourly-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 5px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
         }
         .hourly-item {
             text-align: center;
             padding: 6px 4px;
             background: #f8f9fa;
             border-radius: 6px;
+            transition: all 0.3s ease;
         }
         .hourly-item.has-data {
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            background: linear-gradient(135deg, #667eea22 0%, #764ba222 100%);
+            border: 1px solid #667eea44;
         }
         .hourly-item .hour {
+            display: block;
             font-size: 0.65rem;
             color: #888;
-            display: block;
         }
         .hourly-item .count {
+            display: block;
             font-size: 0.85rem;
             font-weight: 700;
-            color: #667eea;
+            color: #333;
         }
         .hourly-item .count.zero {
             color: #ccc;
         }
         .hourly-total {
-            text-align: center;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
+            text-align: right;
             font-size: 0.8rem;
             color: #666;
+            padding-top: 8px;
+            border-top: 1px dashed #eee;
         }
-        .hourly-total strong {
-            color: #667eea;
-            font-size: 1rem;
+
+        /* Shift Tabs for Hourly Production */
+        .shift-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+        .shift-tab-btn {
+            flex: 1;
+            padding: 6px 8px;
+            border: 1px solid #e0e6ed;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s;
+            color: #666;
+        }
+        .shift-tab-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        .shift-tab-btn.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+        .shift-tab-btn .shift-icon {
+            font-size: 12px;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .shift-tab-btn .shift-count {
+            font-size: 0.65rem;
+            opacity: 0.8;
         }
 
         /* Logs Card */
         .logs-card {
             background: #fff;
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
         }
         .logs-card .table {
-            margin-bottom: 0;
             font-size: 0.85rem;
+            margin-bottom: 0;
         }
-        .logs-card .table th {
+        .logs-card .table thead th {
             border-top: none;
-            color: #888;
+            border-bottom: 2px solid #eee;
             font-weight: 600;
+            color: #555;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            font-size: 0.7rem;
-            letter-spacing: 0.5px;
+        }
+        .logs-card .table tbody td {
+            vertical-align: middle;
             padding: 8px;
         }
-        .logs-card .table td {
-            vertical-align: middle;
-            padding: 10px 8px;
-        }
         .log-time {
-            background: #f0f3ff;
-            color: #667eea;
-            padding: 3px 8px;
+            background: #f0f0f0;
+            padding: 2px 8px;
             border-radius: 4px;
-            font-weight: 600;
-            font-size: 0.8rem;
+            font-family: monospace;
+            font-size: 0.75rem;
         }
 
         /* No Data */
         .no-data {
             text-align: center;
-            padding: 15px 10px;
+            padding: 20px;
             color: #888;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
     </style>
 @endsection
 
 @section('content')
-    <div class="row layout-top-spacing">
-
-        {{-- Welcome + Progress Row --}}
-        <div class="col-xl-7 col-lg-7 col-md-12 layout-spacing">
+    <div class="row">
+        {{-- Welcome Card --}}
+        <div class="col-xl-4 col-lg-4 col-md-12 layout-spacing">
             <div class="welcome-card h-100">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="mb-0" style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Welcome back,</p>
-                        <h2>{{ auth()->user()->name }} 👋</h2>
-                        <small style="color: rgba(255,255,255,0.5);" id="currentDate"></small>
-                    </div>
-                    <div class="text-end">
-                        <div class="time-display" id="currentTime"></div>
-                        <span class="badge" style="background: rgba(255,255,255,0.2); color: #fff; font-size: 0.7rem;">
-                            {{ ucfirst(auth()->user()->role) }}
-                        </span>
-                    </div>
-                </div>
+                <h2>Welcome Back! 👋</h2>
+                <p class="mb-2 text-white-50">{{ auth()->user()->name }}</p>
+                <div class="time-display" id="currentTime">--:--:--</div>
+                <small class="text-white-50" id="currentDate"></small>
 
                 <div class="quick-actions">
-                    @if(auth()->user()->role === 'supervisor')
-                        <a href="{{ route('supervisor.scan') }}" class="quick-action-btn primary">📷 Scan QR</a>
-                        <a href="{{ route('supervisor.quick-select') }}" class="quick-action-btn success">⚡ Quick Select</a>
-                    @endif
                     @if(auth()->user()->role === 'admin')
-                        <a href="{{ route('tables.create') }}" class="quick-action-btn primary">+ Table</a>
-                        <a href="{{ route('workers.create') }}" class="quick-action-btn success">+ Worker</a>
-                        <a href="{{ route('assignments.index') }}" class="quick-action-btn warning">📅 Assign</a>
+                        <a href="{{ route('assignments.bulk') }}" class="quick-action-btn primary">
+                            📋 Assignments
+                        </a>
+                        <a href="{{ route('reports.index') }}" class="quick-action-btn success">
+                            📊 Reports
+                        </a>
+                    @elseif(auth()->user()->role === 'supervisor')
+                        <a href="{{ route('supervisor.scan') }}" class="quick-action-btn primary">
+                            📷 Scan QR
+                        </a>
+                        <a href="{{ route('supervisor.quick-select') }}" class="quick-action-btn success">
+                            🎯 Quick Select
+                        </a>
                     @endif
-                    <a href="{{ route('monitor') }}" class="quick-action-btn" style="background: #333; color: #fff;">🖥️ Monitor</a>
+                    <a href="{{ route('monitor') }}" class="quick-action-btn warning">
+                        📺 Monitor
+                    </a>
                 </div>
             </div>
         </div>
 
-        <div class="col-xl-5 col-lg-5 col-md-12 layout-spacing">
+        {{-- Target Progress --}}
+        <div class="col-xl-8 col-lg-8 col-md-12 layout-spacing">
             <div class="progress-card h-100">
                 <div class="progress-info">
                     <div>
-                        <div class="target-label">Today's Production</div>
-                        <div class="target-value">{{ number_format($stats['today_production']) }}</div>
+                        <div class="target-value">{{ number_format($stats['today_production']) }} / {{ number_format($stats['daily_target']) }}</div>
+                        <div class="target-label">Daily Production Target</div>
                     </div>
                     <div class="text-end">
-                        <div class="target-label">Target</div>
-                        <div class="target-value">{{ number_format($stats['daily_target'] ?? 1000) }}</div>
+                        <div class="target-value {{ $stats['target_progress'] >= 100 ? 'text-success' : '' }}">{{ $stats['target_progress'] }}%</div>
+                        <div class="target-label">Progress</div>
                     </div>
                 </div>
-                @php
-                    $progress = $stats['target_progress'] ?? 0;
-                    $progressColor = $progress >= 100 ? '#27ae60' : ($progress >= 75 ? '#f39c12' : ($progress >= 50 ? '#e67e22' : '#e74c3c'));
-                @endphp
                 <div class="progress">
-                    <div class="progress-bar" style="width: {{ min($progress, 100) }}%; background: {{ $progressColor }};">
-                        {{ round($progress) }}%
+                    <div class="progress-bar {{ $stats['target_progress'] >= 100 ? 'bg-success' : '' }}"
+                         role="progressbar"
+                         style="width: {{ min($stats['target_progress'], 100) }}%; background: {{ $stats['target_progress'] < 100 ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '' }};"
+                         aria-valuenow="{{ $stats['target_progress'] }}"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+                        {{ $stats['target_progress'] }}%
                     </div>
                 </div>
-                <div class="d-flex justify-content-between mt-2">
+                <div class="d-flex justify-content-between mt-3">
                     <small class="text-muted">
-                        @if($progress >= 100) 🎉 Achieved!
-                        @elseif($progress >= 75) 💪 Almost!
-                        @elseif($progress >= 50) 📈 Going!
-                        @else 🚀 Speed up!
-                        @endif
+                        🏭 {{ $stats['total_tables'] }} Tables Active
                     </small>
-                    <small class="text-muted">{{ number_format(max(0, ($stats['daily_target'] ?? 1000) - $stats['today_production'])) }} left</small>
+                    <small class="text-muted">
+                        👷 {{ $stats['total_workers'] }} Workers
+                    </small>
+                    <small class="text-{{ $stats['active_alerts'] > 0 ? 'danger' : 'success' }}">
+                        {{ $stats['active_alerts'] > 0 ? '🚨 ' . $stats['active_alerts'] . ' Alerts' : '✅ No Alerts' }}
+                    </small>
                 </div>
             </div>
         </div>
 
-        {{-- Statistics Cards --}}
+        {{-- Stat Cards --}}
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 layout-spacing">
             <div class="stat-card tables">
-                <div class="stat-icon">📋</div>
+                <div class="stat-icon">🏭</div>
                 <div class="stat-value">{{ $stats['total_tables'] }}</div>
                 <div class="stat-label">Active Tables</div>
             </div>
         </div>
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 layout-spacing">
             <div class="stat-card workers">
-                <div class="stat-icon">👥</div>
+                <div class="stat-icon">👷</div>
                 <div class="stat-value">{{ $stats['total_workers'] }}</div>
                 <div class="stat-label">Active Workers</div>
             </div>
@@ -467,38 +504,87 @@
             </div>
         </div>
 
+        {{-- Hourly Production with Shift Tabs --}}
         <div class="col-xl-4 col-lg-4 col-md-4 layout-spacing">
             <div class="compact-card">
                 <div class="card-header-custom">
                     <h6>📊 Hourly Production</h6>
                 </div>
 
-                @php
-                    // hourlyProduction is now an array with keys like "08", "09", "10", etc.
-                    $hourlyMap = $hourlyProduction ?? [];
+                {{-- Shift Tabs --}}
+                @if(isset($shifts) && count($shifts) > 0)
+                    <div class="shift-tabs">
+                        @foreach($shifts as $index => $shift)
+                            <div class="shift-tab-btn {{ $index == 0 ? 'active' : '' }}" data-shift="{{ $shift->id }}">
+                        <span class="shift-icon">
+                            @if(strtotime($shift->start_time) < strtotime('12:00'))
+                                🌅
+                            @elseif(strtotime($shift->start_time) < strtotime('18:00'))
+                                ☀️
+                            @else
+                                🌙
+                            @endif
+                        </span>
+                                {{ Str::limit($shift->name, 8) }}
+                                <span class="shift-count">({{ $shiftProduction[$shift->id] ?? 0 }})</span>
+                            </div>
+                        @endforeach
+                    </div>
 
-                    // Define hours to display (using 2-digit format to match controller)
-                    $hours = ['08', '09', '10', '11', '12', '13', '14', '15', '16', '17'];
+                    @php
+                        // Define hours for each shift
+                        $shiftHours = [
+                            1 => ['06', '07', '08', '09', '10', '11', '12', '13'], // Morning
+                            2 => ['14', '15', '16', '17', '18', '19', '20', '21'], // Day
+                            3 => ['22', '23', '00', '01', '02', '03', '04', '05'], // Night
+                        ];
 
-                    // Calculate total from the map
-                    $totalHourly = is_array($hourlyMap) ? array_sum($hourlyMap) : 0;
-                @endphp
+                        $hourlyMap = $hourlyProduction ?? [];
+                    @endphp
 
-                <div class="hourly-grid">
-                    @foreach($hours as $hour)
-                        @php
-                            $count = $hourlyMap[$hour] ?? 0;
-                        @endphp
-                        <div class="hourly-item {{ $count > 0 ? 'has-data' : '' }}">
-                            <span class="hour">{{ $hour }}h</span>
-                            <span class="count {{ $count == 0 ? 'zero' : '' }}">{{ $count }}</span>
+                    {{-- Hourly Grids for Each Shift --}}
+                    @foreach($shifts as $index => $shift)
+                        <div class="hourly-grid shift-grid" data-shift="{{ $shift->id }}" style="{{ $index != 0 ? 'display: none;' : '' }}">
+                            @php
+                                $hours = $shiftHours[$shift->id] ?? ['08', '09', '10', '11', '12', '13', '14', '15'];
+                            @endphp
+                            @foreach($hours as $hour)
+                                @php
+                                    $count = $hourlyMap[$hour] ?? 0;
+                                @endphp
+                                <div class="hourly-item {{ $count > 0 ? 'has-data' : '' }}">
+                                    <span class="hour">{{ $hour }}h</span>
+                                    <span class="count {{ $count == 0 ? 'zero' : '' }}">{{ $count }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="hourly-total shift-total" data-shift="{{ $shift->id }}" style="{{ $index != 0 ? 'display: none;' : '' }}">
+                            Total: <strong>{{ number_format($shiftProduction[$shift->id] ?? 0) }}</strong> pcs
                         </div>
                     @endforeach
-                </div>
 
-                <div class="hourly-total">
-                    Total: <strong>{{ number_format($totalHourly) }}</strong> pcs
-                </div>
+                @else
+                    {{-- Fallback if no shifts --}}
+                    @php
+                        $hourlyMap = $hourlyProduction ?? [];
+                        $defaultHours = ['08', '09', '10', '11', '12', '13', '14', '15', '16', '17'];
+                        $totalHourly = is_array($hourlyMap) ? array_sum($hourlyMap) : 0;
+                    @endphp
+                    <div class="hourly-grid">
+                        @foreach($defaultHours as $hour)
+                            @php
+                                $count = $hourlyMap[$hour] ?? 0;
+                            @endphp
+                            <div class="hourly-item {{ $count > 0 ? 'has-data' : '' }}">
+                                <span class="hour">{{ $hour }}h</span>
+                                <span class="count {{ $count == 0 ? 'zero' : '' }}">{{ $count }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="hourly-total">
+                        Total: <strong>{{ number_format($totalHourly) }}</strong> pcs
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -584,6 +670,27 @@
 
         updateClock();
         setInterval(updateClock, 1000);
+
+        // Shift Tab Switching
+        document.querySelectorAll('.shift-tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const shiftId = this.dataset.shift;
+
+                // Update active tab
+                document.querySelectorAll('.shift-tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Show/hide grids
+                document.querySelectorAll('.shift-grid').forEach(grid => {
+                    grid.style.display = grid.dataset.shift === shiftId ? 'grid' : 'none';
+                });
+
+                // Show/hide totals
+                document.querySelectorAll('.shift-total').forEach(total => {
+                    total.style.display = total.dataset.shift === shiftId ? 'block' : 'none';
+                });
+            });
+        });
 
         // Auto refresh every 60 seconds
         setTimeout(function() {
