@@ -119,7 +119,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/supervisor/my-activity', [SupervisorController::class, 'myActivity'])->name('supervisor.my-activity');
     Route::get('/supervisor/quick-select', [SupervisorController::class, 'quickSelect'])->name('supervisor.quick-select');
     Route::get('/supervisor/device-status', [SupervisorController::class, 'getDeviceStatus'])->name('supervisor.device.status');
-    
+
 });
 
 Route::middleware(['auth'])->group(function () {

@@ -3,15 +3,15 @@
  * ESP32 + WS2812B - With Web Server Interface
  * Factory Table Light Indicator System
  * ============================================
- * 
+ *
  * Features:
  * - Polls Laravel server for commands
  * - Local Web Server interface for direct control
  * - Push button alert
  * - Buzzer feedback
- * 
+ *
  * Access web interface: http://[ESP32_IP_ADDRESS]
- * 
+ *
  * ============================================
  */
 
@@ -26,8 +26,8 @@
 // ============================================
 
 // WiFi Settings
-const char* ssid = "Tanvir";
-const char* password = "Tanvir@4321!";
+const char* ssid = "YOUR SSID";
+const char* password = "YOUR WIFI PASSWORD";
 
 // Server Settings - YOUR CPANEL DOMAIN
 const char* serverHost = "http://kds.differentcoder.website";
@@ -93,7 +93,7 @@ String getWebPage() {
             color: #fff;
         }
         .container { max-width: 600px; margin: 0 auto; }
-        
+
         .header {
             text-align: center;
             padding: 20px;
@@ -110,7 +110,7 @@ String getWebPage() {
             font-size: 18px;
             font-weight: bold;
         }
-        
+
         .status-card {
             background: rgba(255,255,255,0.1);
             border-radius: 15px;
@@ -136,7 +136,7 @@ String getWebPage() {
         .status-item .value { font-size: 16px; font-weight: bold; margin-top: 5px; }
         .status-item .value.online { color: #2ecc71; }
         .status-item .value.offline { color: #e74c3c; }
-        
+
         .led-indicator {
             width: 80px;
             height: 80px;
@@ -151,7 +151,7 @@ String getWebPage() {
         .led-blue { background: #3498db; box-shadow: 0 0 30px #3498db; }
         .led-yellow { background: #f1c40f; box-shadow: 0 0 30px #f1c40f; }
         .led-white { background: #fff; box-shadow: 0 0 30px #fff; }
-        
+
         .control-section {
             background: rgba(255,255,255,0.1);
             border-radius: 15px;
@@ -163,7 +163,7 @@ String getWebPage() {
             margin-bottom: 15px;
             font-size: 16px;
         }
-        
+
         .color-buttons {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -187,7 +187,7 @@ String getWebPage() {
         .btn-yellow { background: #f1c40f; color: #333; }
         .btn-white { background: #ecf0f1; color: #333; }
         .btn-off { background: #333; border: 2px solid #555; }
-        
+
         .action-buttons {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -206,7 +206,7 @@ String getWebPage() {
         .btn-beep { background: #9b59b6; color: #fff; }
         .btn-flash { background: #e67e22; color: #fff; }
         .btn-refresh { background: #1abc9c; color: #fff; }
-        
+
         .info-section {
             background: rgba(255,255,255,0.05);
             border-radius: 10px;
@@ -215,14 +215,14 @@ String getWebPage() {
             color: #888;
         }
         .info-section p { margin: 5px 0; }
-        
+
         .footer {
             text-align: center;
             padding: 15px;
             color: #666;
             font-size: 12px;
         }
-        
+
         /* Auto-refresh indicator */
         .refresh-indicator {
             position: fixed;
@@ -237,19 +237,19 @@ String getWebPage() {
 </head>
 <body>
     <div class="refresh-indicator">Auto-refresh: 5s</div>
-    
+
     <div class="container">
         <div class="header">
             <h1>🏭 ESP32 Control Panel</h1>
             <div class="table-id">)rawliteral" + String(tableNumber) + R"rawliteral(</div>
         </div>
-        
+
         <!-- Current Status -->
         <div class="status-card">
             <h3>📊 Current Status</h3>
             <div class="led-indicator led-)rawliteral" + currentColor + R"rawliteral("></div>
             <p style="text-align:center; margin-bottom:15px;">Current Color: <strong style="text-transform:uppercase;">)rawliteral" + currentColor + R"rawliteral(</strong></p>
-            
+
             <div class="status-grid">
                 <div class="status-item">
                     <div class="label">WiFi Status</div>
@@ -269,7 +269,7 @@ String getWebPage() {
                 </div>
             </div>
         </div>
-        
+
         <!-- LED Control -->
         <div class="control-section">
             <h3>💡 LED Control</h3>
@@ -281,7 +281,7 @@ String getWebPage() {
                 <button class="color-btn btn-white" onclick="setColor('white')">⚪ WHITE</button>
                 <button class="color-btn btn-off" onclick="setColor('off')">⚫ OFF</button>
             </div>
-            
+
             <div class="action-buttons">
                 <button class="action-btn btn-alert" onclick="sendAlert()">🚨 Send Alert</button>
                 <button class="action-btn btn-beep" onclick="beep()">🔔 Beep</button>
@@ -289,7 +289,7 @@ String getWebPage() {
                 <button class="action-btn btn-refresh" onclick="location.reload()">🔄 Refresh</button>
             </div>
         </div>
-        
+
         <!-- Stats -->
         <div class="status-card">
             <h3>📈 Statistics</h3>
@@ -312,23 +312,23 @@ String getWebPage() {
                 </div>
             </div>
         </div>
-        
+
         <!-- Device Info -->
         <div class="info-section">
             <p><strong>Server:</strong> )rawliteral" + String(serverHost) + R"rawliteral(</p>
             <p><strong>Poll Interval:</strong> )rawliteral" + String(POLL_INTERVAL/1000) + R"rawliteral( seconds</p>
             <p><strong>LEDs:</strong> )rawliteral" + String(NUM_LEDS) + R"rawliteral( x WS2812B</p>
         </div>
-        
+
         <div class="footer">
             Factory Management System - ESP32 Controller v2.0
         </div>
     </div>
-    
+
     <script>
         // Auto refresh page every 5 seconds
         setTimeout(function(){ location.reload(); }, 5000);
-        
+
         function setColor(color) {
             fetch('/set?color=' + color)
                 .then(response => response.text())
@@ -338,7 +338,7 @@ String getWebPage() {
                 })
                 .catch(error => console.error('Error:', error));
         }
-        
+
         function sendAlert() {
             fetch('/alert')
                 .then(response => response.text())
@@ -347,13 +347,13 @@ String getWebPage() {
                     location.reload();
                 });
         }
-        
+
         function beep() {
             fetch('/beep')
                 .then(response => response.text())
                 .then(data => console.log('Beep'));
         }
-        
+
         function flash() {
             fetch('/flash')
                 .then(response => response.text())
@@ -366,7 +366,7 @@ String getWebPage() {
 </body>
 </html>
 )rawliteral";
-    
+
     return html;
 }
 
@@ -375,7 +375,7 @@ String getUptime() {
     unsigned long seconds = (millis() - startTime) / 1000;
     unsigned long minutes = seconds / 60;
     unsigned long hours = minutes / 60;
-    
+
     if (hours > 0) {
         return String(hours) + "h " + String(minutes % 60) + "m";
     } else if (minutes > 0) {
@@ -431,10 +431,10 @@ void handleStatus() {
     doc["uptime"] = millis() - startTime;
     doc["alerts"] = alertCount;
     doc["commands"] = commandCount;
-    
+
     String response;
     serializeJson(doc, response);
-    
+
     server.send(200, "application/json", response);
 }
 
@@ -455,7 +455,7 @@ void setAllLEDs(int r, int g, int b) {
 
 void setColor(String color) {
     currentColor = color;
-    
+
     if (color == "red") {
         setAllLEDs(255, 0, 0);
     } else if (color == "green") {
@@ -469,7 +469,7 @@ void setColor(String color) {
     } else {
         setAllLEDs(0, 0, 0);
     }
-    
+
     Serial.println("LED set to: " + color);
 }
 
@@ -500,45 +500,45 @@ void pollServer() {
         Serial.println("WiFi not connected, skipping poll");
         return;
     }
-    
+
     HTTPClient http;
-    
+
     String url = String(serverHost) + "/api/esp32/poll?table=" + tableNumber + "&device_id=" + deviceId;
-    
+
     Serial.println("Polling: " + url);
-    
+
     http.begin(url);
     http.setTimeout(5000);
-    
+
     int httpCode = http.GET();
-    
+
     if (httpCode == 200) {
         String response = http.getString();
         Serial.println("Response: " + response);
-        
+
         StaticJsonDocument<512> doc;
         DeserializationError error = deserializeJson(doc, response);
-        
+
         if (!error) {
             bool success = doc["success"] | false;
-            
+
             if (success) {
                 if (!doc["command"].isNull()) {
                     String cmdColor = doc["command"]["color"] | "off";
                     bool cmdBlink = doc["command"]["blink"] | false;
-                    
+
                     Serial.println("📥 Command received: " + cmdColor);
-                    
+
                     setColor(cmdColor);
                     lastCommand = "Server: " + cmdColor;
                     commandCount++;
-                    
+
                     // Beep on command
                     digitalWrite(BUZZER_PIN, HIGH);
                     delay(50);
                     digitalWrite(BUZZER_PIN, LOW);
                 }
-                
+
                 String serverColor = doc["current_color"] | "off";
                 if (doc["command"].isNull() && serverColor != currentColor) {
                     Serial.println("Syncing color to: " + serverColor);
@@ -551,39 +551,39 @@ void pollServer() {
     } else {
         Serial.println("Poll failed, HTTP code: " + String(httpCode));
     }
-    
+
     http.end();
 }
 
 void sendStatus() {
     if (WiFi.status() != WL_CONNECTED) return;
-    
+
     HTTPClient http;
-    
+
     String url = String(serverHost) + "/api/esp32/status";
-    
+
     http.begin(url);
     http.addHeader("Content-Type", "application/json");
     http.setTimeout(5000);
-    
+
     StaticJsonDocument<256> doc;
     doc["table_number"] = tableNumber;
     doc["device_id"] = deviceId;
     doc["current_color"] = currentColor;
     doc["ip_address"] = WiFi.localIP().toString();
     doc["rssi"] = WiFi.RSSI();
-    
+
     String jsonData;
     serializeJson(doc, jsonData);
-    
+
     int httpCode = http.POST(jsonData);
-    
+
     if (httpCode == 200) {
         Serial.println("Status sent OK");
     } else {
         Serial.println("Status send failed: " + String(httpCode));
     }
-    
+
     http.end();
 }
 
@@ -592,27 +592,27 @@ void sendAlert(String alertType) {
         Serial.println("WiFi not connected, cannot send alert");
         return;
     }
-    
+
     HTTPClient http;
-    
+
     String url = String(serverHost) + "/api/esp32/alert";
-    
+
     http.begin(url);
     http.addHeader("Content-Type", "application/json");
     http.setTimeout(5000);
-    
+
     StaticJsonDocument<256> doc;
     doc["table_number"] = tableNumber;
     doc["device_id"] = deviceId;
     doc["alert_type"] = alertType;
-    
+
     String jsonData;
     serializeJson(doc, jsonData);
-    
+
     Serial.println("Sending alert: " + jsonData);
-    
+
     int httpCode = http.POST(jsonData);
-    
+
     if (httpCode == 200) {
         Serial.println("✅ Alert sent successfully");
         alertCount++;
@@ -621,7 +621,7 @@ void sendAlert(String alertType) {
     } else {
         Serial.println("❌ Alert failed: " + String(httpCode));
     }
-    
+
     http.end();
 }
 
@@ -631,11 +631,11 @@ void sendAlert(String alertType) {
 
 void checkButton() {
     int reading = digitalRead(BUTTON_PIN);
-    
+
     if (reading != lastButtonState) {
         lastDebounceTime = millis();
     }
-    
+
     if ((millis() - lastDebounceTime) > 50) {
         if (reading == LOW && !buttonPressed) {
             buttonPressed = true;
@@ -656,15 +656,15 @@ void checkButton() {
 void connectWiFi() {
     Serial.println("Connecting to WiFi...");
     Serial.println("SSID: " + String(ssid));
-    
+
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
-    
+
     int attempt = 0;
     while (WiFi.status() != WL_CONNECTED && attempt < 40) {
         delay(500);
         Serial.print(".");
-        
+
         if (attempt % 2 == 0) {
             setAllLEDs(0, 0, 255);
         } else {
@@ -672,13 +672,13 @@ void connectWiFi() {
         }
         attempt++;
     }
-    
+
     Serial.println();
-    
+
     if (WiFi.status() == WL_CONNECTED) {
         Serial.println("✅ WiFi Connected!");
         Serial.println("IP: " + WiFi.localIP().toString());
-        
+
         for (int i = 0; i < 3; i++) {
             setAllLEDs(0, 255, 0);
             delay(200);
@@ -687,7 +687,7 @@ void connectWiFi() {
         }
     } else {
         Serial.println("❌ WiFi Failed!");
-        
+
         for (int i = 0; i < 5; i++) {
             setAllLEDs(255, 0, 0);
             delay(200);
@@ -704,9 +704,9 @@ void connectWiFi() {
 void setup() {
     Serial.begin(115200);
     delay(1000);
-    
+
     startTime = millis();
-    
+
     Serial.println();
     Serial.println("╔════════════════════════════════════════════╗");
     Serial.println("║   ESP32 Factory Light - Web Interface      ║");
@@ -716,20 +716,20 @@ void setup() {
     Serial.println("Server: " + String(serverHost));
     Serial.println("Poll Interval: " + String(POLL_INTERVAL) + "ms");
     Serial.println();
-    
+
     // Initialize LED strip
     strip.begin();
     strip.setBrightness(BRIGHTNESS);
     strip.show();
-    
+
     // Initialize button & buzzer
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     pinMode(BUZZER_PIN, OUTPUT);
     digitalWrite(BUZZER_PIN, LOW);
-    
+
     // Connect WiFi
     connectWiFi();
-    
+
     // Setup Web Server routes
     server.on("/", handleRoot);
     server.on("/set", handleSetColor);
@@ -738,18 +738,18 @@ void setup() {
     server.on("/flash", handleFlash);
     server.on("/status", handleStatus);
     server.onNotFound(handleNotFound);
-    
+
     // Start Web Server
     server.begin();
     Serial.println("✅ Web Server started!");
     Serial.println("🌐 Open in browser: http://" + WiFi.localIP().toString());
-    
+
     // Initial status report
     if (WiFi.status() == WL_CONNECTED) {
         sendStatus();
         pollServer();
     }
-    
+
     Serial.println();
     Serial.println("🚀 Ready!");
     Serial.println("   - Web Interface: http://" + WiFi.localIP().toString());
@@ -763,29 +763,29 @@ void setup() {
 void loop() {
     // Handle web server requests
     server.handleClient();
-    
+
     unsigned long now = millis();
-    
+
     // Poll Laravel server for commands
     if (now - lastPollTime >= POLL_INTERVAL) {
         lastPollTime = now;
         pollServer();
     }
-    
+
     // Send status every 30 seconds
     if (now - lastStatusTime >= 30000) {
         lastStatusTime = now;
         sendStatus();
     }
-    
+
     // Check physical button
     checkButton();
-    
+
     // Check WiFi and reconnect if needed
     if (WiFi.status() != WL_CONNECTED) {
         Serial.println("WiFi disconnected, reconnecting...");
         connectWiFi();
     }
-    
+
     delay(10);
 }

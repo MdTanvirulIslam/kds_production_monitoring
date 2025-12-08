@@ -3,10 +3,10 @@
  * ESP32 + WS2812B - cPanel Server Polling
  * Factory Table Light Indicator System
  * ============================================
- * 
+ *
  * This version POLLS the server for commands
  * instead of waiting for incoming connections.
- * 
+ *
  * Works with cPanel hosted Laravel!
  */
 
@@ -20,8 +20,8 @@
 // ============================================
 
 // WiFi Settings
-const char* ssid = "Tanvir";
-const char* password = "Tanvir@4321!";
+const char* ssid = "YOUR SSID";
+const char* password = "YOUR WIFI PASSWORD";
 
 // Server Settings - YOUR CPANEL DOMAIN
 const char* serverHost = "http://kds.differentcoder.website";  // ← Change to your domain
@@ -68,7 +68,7 @@ void setAllLEDs(int r, int g, int b) {
 
 void setColor(String color) {
     currentColor = color;
-    
+
     if (color == "red") {
         setAllLEDs(255, 0, 0);
     } else if (color == "green") {
@@ -82,7 +82,7 @@ void setColor(String color) {
     } else {
         setAllLEDs(0, 0, 0);
     }
-    
+
     Serial.println("LED set to: " + color);
 }
 
@@ -114,47 +114,47 @@ void pollServer() {
         Serial.println("WiFi not connected, skipping poll");
         return;
     }
-    
+
     HTTPClient http;
-    
+
     // Build poll URL
     String url = String(serverHost) + "/api/esp32/poll?table=" + tableNumber + "&device_id=" + deviceId;
-    
+
     Serial.println("Polling: " + url);
-    
+
     http.begin(url);
     http.setTimeout(5000);
-    
+
     int httpCode = http.GET();
-    
+
     if (httpCode == 200) {
         String response = http.getString();
         Serial.println("Response: " + response);
-        
+
         // Parse JSON response
         StaticJsonDocument<512> doc;
         DeserializationError error = deserializeJson(doc, response);
-        
+
         if (!error) {
             bool success = doc["success"] | false;
-            
+
             if (success) {
                 // Check for command
                 if (!doc["command"].isNull()) {
                     String cmdColor = doc["command"]["color"] | "off";
                     bool cmdBlink = doc["command"]["blink"] | false;
-                    
+
                     Serial.println("📥 Command received: " + cmdColor);
-                    
+
                     // Execute command
                     setColor(cmdColor);
-                    
+
                     // Beep on command
                     digitalWrite(BUZZER_PIN, HIGH);
                     delay(50);
                     digitalWrite(BUZZER_PIN, LOW);
                 }
-                
+
                 // Sync with server's current color if no command
                 String serverColor = doc["current_color"] | "off";
                 if (doc["command"].isNull() && serverColor != currentColor) {
@@ -168,40 +168,40 @@ void pollServer() {
     } else {
         Serial.println("Poll failed, HTTP code: " + String(httpCode));
     }
-    
+
     http.end();
 }
 
 // Send status to server
 void sendStatus() {
     if (WiFi.status() != WL_CONNECTED) return;
-    
+
     HTTPClient http;
-    
+
     String url = String(serverHost) + "/api/esp32/status";
-    
+
     http.begin(url);
     http.addHeader("Content-Type", "application/json");
     http.setTimeout(5000);
-    
+
     StaticJsonDocument<256> doc;
     doc["table_number"] = tableNumber;
     doc["device_id"] = deviceId;
     doc["current_color"] = currentColor;
     doc["ip_address"] = WiFi.localIP().toString();
     doc["rssi"] = WiFi.RSSI();
-    
+
     String jsonData;
     serializeJson(doc, jsonData);
-    
+
     int httpCode = http.POST(jsonData);
-    
+
     if (httpCode == 200) {
         Serial.println("Status sent OK");
     } else {
         Serial.println("Status send failed: " + String(httpCode));
     }
-    
+
     http.end();
 }
 
@@ -211,27 +211,27 @@ void sendAlert(String alertType) {
         Serial.println("WiFi not connected, cannot send alert");
         return;
     }
-    
+
     HTTPClient http;
-    
+
     String url = String(serverHost) + "/api/esp32/alert";
-    
+
     http.begin(url);
     http.addHeader("Content-Type", "application/json");
     http.setTimeout(5000);
-    
+
     StaticJsonDocument<256> doc;
     doc["table_number"] = tableNumber;
     doc["device_id"] = deviceId;
     doc["alert_type"] = alertType;
-    
+
     String jsonData;
     serializeJson(doc, jsonData);
-    
+
     Serial.println("Sending alert: " + jsonData);
-    
+
     int httpCode = http.POST(jsonData);
-    
+
     if (httpCode == 200) {
         Serial.println("✅ Alert sent successfully");
         flashAlert();
@@ -239,7 +239,7 @@ void sendAlert(String alertType) {
     } else {
         Serial.println("❌ Alert failed: " + String(httpCode));
     }
-    
+
     http.end();
 }
 
@@ -249,11 +249,11 @@ void sendAlert(String alertType) {
 
 void checkButton() {
     int reading = digitalRead(BUTTON_PIN);
-    
+
     if (reading != lastButtonState) {
         lastDebounceTime = millis();
     }
-    
+
     if ((millis() - lastDebounceTime) > 50) {
         if (reading == LOW && !buttonPressed) {
             buttonPressed = true;
@@ -274,15 +274,15 @@ void checkButton() {
 void connectWiFi() {
     Serial.println("Connecting to WiFi...");
     Serial.println("SSID: " + String(ssid));
-    
+
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
-    
+
     int attempt = 0;
     while (WiFi.status() != WL_CONNECTED && attempt < 40) {
         delay(500);
         Serial.print(".");
-        
+
         // Blink blue while connecting
         if (attempt % 2 == 0) {
             setAllLEDs(0, 0, 255);
@@ -291,13 +291,13 @@ void connectWiFi() {
         }
         attempt++;
     }
-    
+
     Serial.println();
-    
+
     if (WiFi.status() == WL_CONNECTED) {
         Serial.println("✅ WiFi Connected!");
         Serial.println("IP: " + WiFi.localIP().toString());
-        
+
         // Flash green on success
         for (int i = 0; i < 3; i++) {
             setAllLEDs(0, 255, 0);
@@ -307,7 +307,7 @@ void connectWiFi() {
         }
     } else {
         Serial.println("❌ WiFi Failed!");
-        
+
         // Flash red on failure
         for (int i = 0; i < 5; i++) {
             setAllLEDs(255, 0, 0);
@@ -325,7 +325,7 @@ void connectWiFi() {
 void setup() {
     Serial.begin(115200);
     delay(1000);
-    
+
     Serial.println();
     Serial.println("╔════════════════════════════════════════╗");
     Serial.println("║   Factory Light - Server Polling       ║");
@@ -335,26 +335,26 @@ void setup() {
     Serial.println("Server: " + String(serverHost));
     Serial.println("Poll Interval: " + String(POLL_INTERVAL) + "ms");
     Serial.println();
-    
+
     // Initialize LED strip
     strip.begin();
     strip.setBrightness(BRIGHTNESS);
     strip.show();
-    
+
     // Initialize button & buzzer
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     pinMode(BUZZER_PIN, OUTPUT);
     digitalWrite(BUZZER_PIN, LOW);
-    
+
     // Connect WiFi
     connectWiFi();
-    
+
     // Initial status report
     if (WiFi.status() == WL_CONNECTED) {
         sendStatus();
         pollServer();  // Get initial state
     }
-    
+
     Serial.println();
     Serial.println("🚀 Ready! Polling server every " + String(POLL_INTERVAL/1000) + " seconds");
 }
@@ -365,27 +365,27 @@ void setup() {
 
 void loop() {
     unsigned long now = millis();
-    
+
     // Poll server for commands
     if (now - lastPollTime >= POLL_INTERVAL) {
         lastPollTime = now;
         pollServer();
     }
-    
+
     // Send status every 30 seconds
     if (now - lastStatusTime >= 30000) {
         lastStatusTime = now;
         sendStatus();
     }
-    
+
     // Check button
     checkButton();
-    
+
     // Check WiFi and reconnect if needed
     if (WiFi.status() != WL_CONNECTED) {
         Serial.println("WiFi disconnected, reconnecting...");
         connectWiFi();
     }
-    
+
     delay(10);
 }

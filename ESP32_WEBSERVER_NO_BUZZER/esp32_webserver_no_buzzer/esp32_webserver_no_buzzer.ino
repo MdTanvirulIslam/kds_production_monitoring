@@ -15,8 +15,8 @@
 // CONFIGURATION - CHANGE THESE VALUES
 // ============================================
 
-const char* ssid = "Tanvir";
-const char* password = "Tanvir@4321!";
+const char* ssid = "YOUR SSID";
+const char* password = "YOUR WIFI PASSWORD";
 
 const char* serverHost = "http://192.168.0.101:8000";
 const char* tableNumber = "T005";
